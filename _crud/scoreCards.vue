@@ -1,4 +1,6 @@
-<template></template>
+<template>
+
+</template>
 
 <script>
 export default {
@@ -38,9 +40,9 @@ export default {
             },
             {
               name: "station",
-              label: "Location",
-              field: "station",
-              format: val => val ? val.stationName : '' ,
+              label: "Station",
+              field: "staff",
+              format: val => val ? (val.station ? `${val.station.stationName} (${val.station.stationCode})` : '') : '' ,
               align: "left",
             },
             {
@@ -69,7 +71,7 @@ export default {
               align: "left",
             },
           ],
-          requestParams: {include: "company,station"},
+          requestParams: {include: "company,staff,staff.station"},
         },
         create: {
           title: 'Create a Score Card'
@@ -80,18 +82,20 @@ export default {
         delete: true,
         formLeft: {
           scoreCardDate: {
-            type:"fullDate",
-            hint:'Format: MM/DD/YYYY HH:mm',
-            mask:'MM/DD/YYYY HH:mm',
-            'place-holder': 'MM/DD/YYYY HH:mm',
-            format24h: true,
+            type:"date",
+            name: "date",
             props:{
+
+              hint:'Format: MM/DD/YYYY',
+              mask:'MM/DD/YYYY',
+              'place-holder': 'MM/DD/YYYY',
+              format24h: true,
               label: "Date",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
             },
-            name: "date"
+
           },
           staffId: {
             value: null,
@@ -110,28 +114,41 @@ export default {
           },
           actualHct: {
             value: 0,
-            type:"quantity",
+            type:"input",
+
             props:{
-              label: "Staff"
+              classes:"col-3",
+              type:"number",
+              label: "Staff",
+              mask:'###################',
             },
             rules: [
               val => !!val || this.$tr('isite.cms.message.fieldRequired')
             ],
             name: "actualHct"
           },
+
           fuel: {
             value: false,
-            type:"checkbox",
+            type:"select",
             props:{
-              label: "Fuel"
+              label: "Fuel",
+              options: [
+                {label: "Yes", value: true},
+                {label: "No", value: false},
+              ]
             },
             name: "fuel"
           },
           gse: {
             value: false,
-            type:"checkbox",
+            type:"select",
             props:{
               label: "GSE",
+              options: [
+                {label: "Yes", value: true},
+                {label: "No", value: false},
+              ]
             },
             name: "gse"
           },
@@ -152,13 +169,13 @@ export default {
             },
           },
           flightType: {
-            value: 1,
+            value: "Arrive",
             type: 'select',
             props: {
               label: "Flight",
               options: [
-                {label: "Arrive", value: 1},
-                {label: "Departure", value: 2},
+                {label: "Arrive", value: "Arrive"},
+                {label: "Departure", value: "Departure"},
               ],
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -167,11 +184,11 @@ export default {
           },
           std: {
             type:"fullDate",
-            hint:'Format: MM/DD/YYYY HH:mm',
-            mask:'MM/DD/YYYY HH:mm',
-            'place-holder': 'MM/DD/YYYY HH:mm',
-            format24h: true,
             props:{
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              format24h: true,
               label: this.crudInfo.flightType == 1 ? "STA" : "STD",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -179,20 +196,23 @@ export default {
             },
             name: "std"
           },
-          adt: {
+          atd: {
             type:"fullDate",
-            hint:'Format: MM/DD/YYYY HH:mm',
-            mask:'MM/DD/YYYY HH:mm',
-            'place-holder': 'MM/DD/YYYY HH:mm',
-            format24h: true,
             props:{
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              format24h: true,
               label: this.crudInfo.flightType == 1 ? "ATA" : "ATD",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
             },
-            name: "adt"
+            name: "atd"
           },
+
+        },
+        formRight: {
           outOfService: {
             type:"input",
             props:{
@@ -244,13 +264,23 @@ export default {
               type:"textarea"
             },
           },
+        },
+        getDataForm: (data, typeForm) => {
+          console.warn(">>>>>",data)
+          return new Promise((resolve, reject) => {
+            resolve({
+              ...data,
+              flightType : parseInt(data.flightType)
+            })
+          })
         }
       };
     },
     //Crud info
     crudInfo() {
       return this.$store.state.qcrudComponent.component[this.crudId] || {}
-    }
+    },
+
   },
 };
 </script>
