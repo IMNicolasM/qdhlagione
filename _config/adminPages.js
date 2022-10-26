@@ -1,8 +1,8 @@
 export default {
   scoreCards: {
-    //permission: 'idhl.score-cards.manage',
-    activated: false,
-    // authenticated: true,
+    permission: 'idhl.score-cards.manage',
+    activated: true,
+    authenticated: true,
     path: '/dhl/score-cards',
     name: 'qdh-lagione.admin.scoreCards',
     crud: import('../_crud/scoreCards'),
@@ -16,7 +16,7 @@ export default {
   },
   staffs: {
     //permission: 'idhl.staffs.manage',
-    activated: false,
+    activated: true,
     //  authenticated: true,
     path: '/dhl/staffs',
     name: 'qdhl-agione.admin.staffs',

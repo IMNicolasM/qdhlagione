@@ -12,9 +12,9 @@ export default {
   computed: {
     crudData() {
       return {
-        //permission: 'setup.buildings.manage',
+       permission: 'idhl.score-cards',
         crudId: this.crudId,
-        //entityName: config("main.qsetupagione.entityNames.buildings"),
+      //  entityName: config("main.qsetupagione.entityNames.buildings"),
         apiRoute: "apiRoutes.qdhlagione.scoreCards",
         read: {
           columns: [
@@ -34,8 +34,8 @@ export default {
             {
               name: "shift",
               label: "Session",
-              format: val => val ? "PM" : "AM",
-              field: "shift",
+              format: val => val ? (val.shift ? "PM" : "AM") : '',
+              field: "staff",
               align: "left",
             },
             {
@@ -71,6 +71,16 @@ export default {
               align: "left",
             },
           ],
+          filters:{
+            date: {
+              props:{
+                label: "Date"
+              },
+              field: {value: 'date'},
+              quickFilter: true
+            },
+
+          },
           requestParams: {include: "company,staff,staff.station"},
         },
         create: {
@@ -85,11 +95,10 @@ export default {
             type:"date",
             name: "date",
             props:{
-
-              hint:'Format: MM/DD/YYYY',
-              mask:'MM/DD/YYYY',
-              'place-holder': 'MM/DD/YYYY',
-              format24h: true,
+            //  hint:'Format: MM/DD/YYYY',
+          //    mask:'MM/DD/YYYY',
+           //   'place-holder': 'MM/DD/YYYY',
+          //    format24h: true,
               label: "Date",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -185,10 +194,10 @@ export default {
           std: {
             type:"fullDate",
             props:{
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              format24h: true,
+          //    hint:'Format: MM/DD/YYYY HH:mm',
+            //  mask:'MM/DD/YYYY HH:mm',
+            //  'place-holder': 'MM/DD/YYYY HH:mm',
+           //   format24h: true,
               label: this.crudInfo.flightType == 1 ? "STA" : "STD",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -199,10 +208,10 @@ export default {
           atd: {
             type:"fullDate",
             props:{
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              format24h: true,
+         //    hint:'Format: MM/DD/YYYY HH:mm',
+          //    mask:'MM/DD/YYYY HH:mm',
+          //    'place-holder': 'MM/DD/YYYY HH:mm',
+          //    format24h: true,
               label: this.crudInfo.flightType == 1 ? "ATA" : "ATD",
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -266,11 +275,14 @@ export default {
           },
         },
         getDataForm: (data, typeForm) => {
-          console.warn(">>>>>",data)
+
           return new Promise((resolve, reject) => {
             resolve({
               ...data,
-              flightType : parseInt(data.flightType)
+              flightType : parseInt(data.flightType),
+              date: this.dateFormatterFull(data.date,"date"),
+              std: this.dateFormatterFull(data.std),
+              atd: this.dateFormatterFull(data.atd)
             })
           })
         }
@@ -282,5 +294,20 @@ export default {
     },
 
   },
+  methods:{
+    dateFormatterFull(date, type = "datetime") {
+      if (!date) return null
+console.warn("$date$",date,type)
+      if(type == "datetime"){
+        const formDate = date.split(" ")
+        const [year, month, day] = formDate[0].substr(0, 10).split('/')
+        const [hr, mm] = formDate[1].substr(0, 5).split(':')
+        return `${month}/${day}/${year} ${hr}:${mm}`
+      }else{
+        const [year, month, day] = date.substr(0, 10).split('/')
+        return `${month}/${day}/${year}`
+      }
+    },
+  }
 };
 </script>
