@@ -1,7 +1,11 @@
-import layout from './layout'
-import sidebar from './sidebar'
-
 export default {
-  layout,
-  sidebar
+  "idhl": {
+    "cms": {
+      "sidebar": {
+        "dhlInfo": "DHL",
+        "scoreCards": "Score Cards",
+        "staffs": "Staffing"
+      }
+    }
+  }
 }
